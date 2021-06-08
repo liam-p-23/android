@@ -38,6 +38,7 @@ class ShareeListAdapterTest {
     private val context: Context? = null
 
     @Test
+    @Suppress("LongMethod")
     fun testSorting() {
         MockitoAnnotations.openMocks(this)
         val resources = Mockito.mock(Resources::class.java)
