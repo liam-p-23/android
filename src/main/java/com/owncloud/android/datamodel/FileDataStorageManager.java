@@ -87,26 +87,16 @@ public class FileDataStorageManager {
     private ContentProviderClient contentProviderClient;
     private Account account;
 
-    @Deprecated
-    public FileDataStorageManager(Account account, ContentResolver contentResolver) {
+    public FileDataStorageManager(User user, ContentResolver contentResolver) {
         this.contentProviderClient = null;
         this.contentResolver = contentResolver;
-        this.account = account;
-    }
-
-    public FileDataStorageManager(User user, ContentResolver contentResolver) {
-        this(user.toPlatformAccount(), contentResolver);
-    }
-
-    @Deprecated
-    public FileDataStorageManager(Account account, ContentProviderClient contentProviderClient) {
-        this.contentProviderClient = contentProviderClient;
-        this.contentResolver = null;
-        this.account = account;
+        this.account = user.toPlatformAccount();
     }
 
     public FileDataStorageManager(User user, ContentProviderClient contentProviderClient) {
-        this(user.toPlatformAccount(), contentProviderClient);
+        this.contentProviderClient = contentProviderClient;
+        this.contentResolver = null;
+        this.account = user.toPlatformAccount();
     }
 
     /**
@@ -827,6 +817,10 @@ public class FileDataStorageManager {
         }
     }
 
+    /**
+     * This method does not require {@link FileDataStorageManager} being initialized
+     * with any specific user. Migration can be performed with {@link com.nextcloud.client.account.AnonymousUser}.
+     */
     public void migrateStoredFiles(String sourcePath, String destinationPath)
         throws RemoteException, OperationApplicationException {
         Cursor cursor;
