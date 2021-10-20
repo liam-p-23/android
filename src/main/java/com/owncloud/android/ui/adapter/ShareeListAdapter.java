@@ -25,13 +25,13 @@
 
 package com.owncloud.android.ui.adapter;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.nextcloud.client.account.User;
+import com.nextcloud.client.network.ClientFactory;
 import com.owncloud.android.R;
 import com.owncloud.android.databinding.FileDetailsShareInternalShareLinkBinding;
 import com.owncloud.android.databinding.FileDetailsShareLinkShareItemBinding;
@@ -39,6 +39,7 @@ import com.owncloud.android.databinding.FileDetailsSharePublicLinkAddNewItemBind
 import com.owncloud.android.databinding.FileDetailsShareShareItemBinding;
 import com.owncloud.android.lib.resources.shares.OCShare;
 import com.owncloud.android.lib.resources.shares.ShareType;
+import com.owncloud.android.ui.activity.FileActivity;
 import com.owncloud.android.utils.DisplayUtils;
 
 import java.util.ArrayList;
@@ -55,24 +56,27 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     implements DisplayUtils.AvatarGenerationListener {
 
     private ShareeListAdapterListener listener;
-    private Context context;
+    private FileActivity fileActivity;
     private List<OCShare> shares;
     private float avatarRadiusDimension;
     private String userId;
     private User user;
+    private final ClientFactory clientFactory;
 
-    public ShareeListAdapter(Context context,
+    public ShareeListAdapter(FileActivity fileActivity,
                              List<OCShare> shares,
                              ShareeListAdapterListener listener,
                              String userId,
-                             User user) {
-        this.context = context;
+                             User user,
+                             ClientFactory clientFactory) {
+        this.fileActivity = fileActivity;
         this.shares = shares;
         this.listener = listener;
         this.userId = userId;
         this.user = user;
+        this.clientFactory = clientFactory;
 
-        avatarRadiusDimension = context.getResources().getDimension(R.dimen.user_icon_radius);
+        avatarRadiusDimension = fileActivity.getResources().getDimension(R.dimen.user_icon_radius);
 
         sortShares();
     }
@@ -89,26 +93,27 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case PUBLIC_LINK:
             case EMAIL:
                 return new LinkShareViewHolder(
-                    FileDetailsShareLinkShareItemBinding.inflate(LayoutInflater.from(context),
+                    FileDetailsShareLinkShareItemBinding.inflate(LayoutInflater.from(fileActivity),
                                                                  parent,
                                                                  false),
-                    context);
+                    fileActivity);
             case NEW_PUBLIC_LINK:
                 return new NewLinkShareViewHolder(
-                    FileDetailsSharePublicLinkAddNewItemBinding.inflate(LayoutInflater.from(context),
+                    FileDetailsSharePublicLinkAddNewItemBinding.inflate(LayoutInflater.from(fileActivity),
                                                                         parent,
                                                                         false)
                 );
             case INTERNAL:
                 return new InternalShareViewHolder(
-                    FileDetailsShareInternalShareLinkBinding.inflate(LayoutInflater.from(context), parent, false),
-                    context);
+                    FileDetailsShareInternalShareLinkBinding.inflate(LayoutInflater.from(fileActivity), parent, false),
+                    fileActivity);
             default:
-                return new ShareViewHolder(FileDetailsShareShareItemBinding.inflate(LayoutInflater.from(context),
+                return new ShareViewHolder(FileDetailsShareShareItemBinding.inflate(LayoutInflater.from(fileActivity),
                                                                                     parent,
                                                                                     false),
                                            user,
-                                           context);
+                                           fileActivity,
+                                           clientFactory);
         }
     }
 
@@ -131,7 +136,7 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             newLinkShareViewHolder.bind(listener);
         } else {
             ShareViewHolder userViewHolder = (ShareViewHolder) holder;
-            userViewHolder.bind(share, listener, this, userId, avatarRadiusDimension);
+            userViewHolder.bind(share, listener, this, userId, avatarRadiusDimension, fileActivity);
         }
     }
 

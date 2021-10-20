@@ -24,8 +24,10 @@ package com.owncloud.android.ui.adapter
 import android.content.Context
 import android.content.res.Resources
 import com.nextcloud.client.account.AnonymousUser
+import com.nextcloud.client.network.ClientFactory
 import com.owncloud.android.lib.resources.shares.OCShare
 import com.owncloud.android.lib.resources.shares.ShareType
+import com.owncloud.android.ui.activity.FileActivity
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mock
@@ -37,11 +39,18 @@ class ShareeListAdapterTest {
     @Mock
     private val context: Context? = null
 
+    @Mock
+    private val fileActivity: FileActivity? = null
+
+    @Mock
+    private val clientFactory: ClientFactory? = null
+
     @Test
     fun testSorting() {
         MockitoAnnotations.openMocks(this)
         val resources = Mockito.mock(Resources::class.java)
         Mockito.`when`(context!!.resources).thenReturn(resources)
+        Mockito.`when`(fileActivity!!.resources).thenReturn(resources)
         val expectedSortOrder: MutableList<OCShare?> = ArrayList()
         expectedSortOrder.add(
             OCShare("/1").apply {
@@ -83,7 +92,7 @@ class ShareeListAdapterTest {
         val randomOrder: MutableList<OCShare?> = ArrayList(expectedSortOrder)
         randomOrder.shuffle()
         val user = AnonymousUser("nextcloud")
-        val sut = ShareeListAdapter(context, randomOrder, null, null, user)
+        val sut = ShareeListAdapter(fileActivity, randomOrder, null, null, user, clientFactory)
         sut.sortShares()
 
         // compare
