@@ -30,27 +30,27 @@ import com.nextcloud.client.network.ClientFactory;
 import com.nextcloud.common.NextcloudClient;
 import com.owncloud.android.R;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
-import com.owncloud.android.ui.activity.FileActivity;
 import com.owncloud.android.ui.fragment.ProfileBottomSheetDialog;
 import com.owncloud.android.utils.DisplayUtils;
 
 import java.lang.ref.WeakReference;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 
 public class RetrieveHoverCardAsyncTask extends AsyncTask<Void, Void, HoverCard> {
     private final User user;
     private final String userId;
-    private final WeakReference<FileActivity> fileActivityWeakReference;
+    private final WeakReference<FragmentActivity> activityWeakReference;
     private final ClientFactory clientFactory;
 
     public RetrieveHoverCardAsyncTask(User user,
                                       String userId,
-                                      FileActivity fileActivity,
+                                      FragmentActivity activity,
                                       ClientFactory clientFactory) {
         this.user = user;
         this.userId = userId;
-        this.fileActivityWeakReference = new WeakReference<>(fileActivity);
+        this.activityWeakReference = new WeakReference<>(activity);
         this.clientFactory = clientFactory;
     }
 
@@ -72,7 +72,7 @@ public class RetrieveHoverCardAsyncTask extends AsyncTask<Void, Void, HoverCard>
 
     @Override
     protected void onPostExecute(HoverCard hoverCard) {
-        FileActivity activity = this.fileActivityWeakReference.get();
+        FragmentActivity activity = this.activityWeakReference.get();
 
         if (activity != null && activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
             if (hoverCard.getActions().size() > 0) {

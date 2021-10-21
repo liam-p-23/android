@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nextcloud.android.lib.resources.profile.Action
@@ -36,7 +37,6 @@ import com.nextcloud.client.account.User
 import com.owncloud.android.R
 import com.owncloud.android.databinding.ProfileBottomSheetActionBinding
 import com.owncloud.android.databinding.ProfileBottomSheetFragmentBinding
-import com.owncloud.android.ui.activity.FileActivity
 import com.owncloud.android.utils.DisplayUtils
 import com.owncloud.android.utils.theme.ThemeColorUtils
 import com.owncloud.android.utils.theme.ThemeDrawableUtils
@@ -45,7 +45,7 @@ import com.owncloud.android.utils.theme.ThemeDrawableUtils
  * Show actions of an user
  */
 class ProfileBottomSheetDialog(
-    private val fileActivity: FileActivity,
+    private val fileActivity: FragmentActivity,
     private val user: User,
     private val hoverCard: HoverCard
 ) : BottomSheetDialog(fileActivity), DisplayUtils.AvatarGenerationListener {

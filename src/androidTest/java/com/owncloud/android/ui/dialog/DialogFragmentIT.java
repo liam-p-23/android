@@ -393,8 +393,8 @@ public class DialogFragmentIT extends AbstractIT {
         List<Action> actions = new ArrayList<>();
         actions.add(new Action("profile",
                                "View profile",
-                               "https://dev.nextcloud.com/core/img/actions/mail.svg", // TODO change
-                               "https://dev.nextcloud.com/u/christine")); // TODO change
+                               "https://dev.nextcloud.com/core/img/actions/profile.svg",
+                               "https://dev.nextcloud.com/index.php/u/christine"));
         actions.add(new Action("core",
                                "christine.scott@nextcloud.com",
                                "https://dev.nextcloud.com/core/img/actions/mail.svg",

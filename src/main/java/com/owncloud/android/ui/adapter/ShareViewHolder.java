@@ -27,14 +27,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.nextcloud.client.account.User;
-import com.nextcloud.client.network.ClientFactory;
 import com.owncloud.android.R;
 import com.owncloud.android.databinding.FileDetailsShareShareItemBinding;
 import com.owncloud.android.lib.resources.shares.OCShare;
-import com.owncloud.android.lib.resources.status.NextcloudVersion;
 import com.owncloud.android.ui.TextDrawable;
-import com.owncloud.android.ui.activity.FileActivity;
-import com.owncloud.android.ui.asynctasks.RetrieveHoverCardAsyncTask;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.theme.ThemeAvatarUtils;
 
@@ -47,7 +43,6 @@ class ShareViewHolder extends RecyclerView.ViewHolder {
     private float avatarRadiusDimension;
     private User user;
     private Context context;
-    private ClientFactory clientFactory;
 
     public ShareViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -55,21 +50,18 @@ class ShareViewHolder extends RecyclerView.ViewHolder {
 
     public ShareViewHolder(FileDetailsShareShareItemBinding binding,
                            User user,
-                           Context context,
-                           ClientFactory clientFactory) {
+                           Context context) {
         this(binding.getRoot());
         this.binding = binding;
         this.user = user;
         this.context = context;
-        this.clientFactory = clientFactory;
     }
 
     public void bind(OCShare share,
                      ShareeListAdapterListener listener,
                      DisplayUtils.AvatarGenerationListener avatarListener,
                      String userId,
-                     float avatarRadiusDimension,
-                     FileActivity fileActivity) {
+                     float avatarRadiusDimension) {
         this.avatarRadiusDimension = avatarRadiusDimension;
         String name = share.getSharedWithDisplayName();
         binding.icon.setTag(null);
@@ -102,11 +94,7 @@ class ShareViewHolder extends RecyclerView.ViewHolder {
                                        binding.icon,
                                        context);
 
-                if (user.getServer().getVersion().isNewerOrEqual(NextcloudVersion.Companion.getNextcloud_23())) {
-                    binding.icon.setOnClickListener(v -> {
-                        new RetrieveHoverCardAsyncTask(user, share.getShareWith(), fileActivity, clientFactory).execute();
-                    });
-                }
+                binding.icon.setOnClickListener(v -> listener.showProfileBottomSheet(user, share.getShareWith()));
             default:
                 setImage(binding.icon, name, R.drawable.ic_user);
                 break;

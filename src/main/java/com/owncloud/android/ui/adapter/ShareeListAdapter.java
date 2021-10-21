@@ -112,8 +112,7 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                                                     parent,
                                                                                     false),
                                            user,
-                                           fileActivity,
-                                           clientFactory);
+                                           fileActivity);
         }
     }
 
@@ -136,7 +135,7 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             newLinkShareViewHolder.bind(listener);
         } else {
             ShareViewHolder userViewHolder = (ShareViewHolder) holder;
-            userViewHolder.bind(share, listener, this, userId, avatarRadiusDimension, fileActivity);
+            userViewHolder.bind(share, listener, this, userId, avatarRadiusDimension);
         }
     }
 
