@@ -21,7 +21,6 @@
 package com.owncloud.android.ui.fragment.contactsbackup;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -186,6 +185,7 @@ public class BackupFragment extends FileFragment implements DatePickerDialog.OnD
         binding.dailyBackup.setOnCheckedChangeListener(dailyBackupCheckedChangeListener);
         binding.backupNow.setOnClickListener(v -> backup());
         binding.backupNow.setEnabled(checkBackupNowPermission());
+        binding.backupNow.setVisibility(checkBackupNowPermission() ? View.VISIBLE : View.GONE);
 
         binding.contactsDatepicker.setOnClickListener(v -> openCleanDate());
 
@@ -321,14 +321,14 @@ public class BackupFragment extends FileFragment implements DatePickerDialog.OnD
             for (int index = 0; index < permissions.length; index++) {
                 if (Manifest.permission.READ_CONTACTS.equalsIgnoreCase(permissions[index])) {
                     if (grantResults[index] >= 0) {
+                        // if approved, exit for loop
                         break;
                     }
 
+                    // if not accepted, disable again
                     binding.contacts.setOnCheckedChangeListener(null);
                     binding.contacts.setChecked(false);
                     binding.contacts.setOnCheckedChangeListener(contactsCheckedListener);
-
-                    binding.backupNow.setVisibility(checkBackupNowPermission() ? View.VISIBLE : View.GONE);
                 }
             }
         }
@@ -337,10 +337,12 @@ public class BackupFragment extends FileFragment implements DatePickerDialog.OnD
             for (int index = 0; index < permissions.length; index++) {
                 if (Manifest.permission.READ_CALENDAR.equalsIgnoreCase(permissions[index])) {
                     if (grantResults[index] >= 0) {
+                        // if approved, exit for loop
                         break;
                     }
                 }
 
+                // if not accepted, disable again
                 binding.calendar.setOnCheckedChangeListener(null);
                 binding.calendar.setChecked(false);
                 binding.calendar.setOnCheckedChangeListener(calendarCheckedListener);
@@ -349,6 +351,7 @@ public class BackupFragment extends FileFragment implements DatePickerDialog.OnD
             }
         }
 
+        binding.backupNow.setVisibility(checkBackupNowPermission() ? View.VISIBLE : View.GONE);
         binding.backupNow.setEnabled(checkBackupNowPermission());
     }
 
@@ -428,7 +431,6 @@ public class BackupFragment extends FileFragment implements DatePickerDialog.OnD
 
         // check permissions
         if (PermissionUtil.checkSelfPermission(contactsPreferenceActivity, Manifest.permission.READ_CALENDAR)) {
-            binding.backupNow.setVisibility(View.VISIBLE);
             return true;
         } else {
             // No explanation needed, request the permission.

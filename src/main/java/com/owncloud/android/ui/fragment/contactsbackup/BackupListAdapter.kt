@@ -393,19 +393,6 @@ class BackupListAdapter(
         } finally {
             cursor?.close()
         }
-        // if (contactsAccounts.size == SINGLE_ACCOUNT) {
-        //     importContacts(contactsAccounts[0])
-        // } else {
-        //     val adapter: ArrayAdapter<*> =
-        //         ArrayAdapter(context, android.R.layout.simple_list_item_1, contactsAccounts)
-        //     val builder = AlertDialog.Builder(context)
-        //     builder.setTitle(R.string.contactlist_account_chooser_title)
-        //         .setAdapter(adapter) { _: DialogInterface?, which: Int ->
-        //             importContacts(
-        //                 contactsAccounts[which]
-        //             )
-        //         }.show()
-        // }
 
         return contactsAccounts
     }

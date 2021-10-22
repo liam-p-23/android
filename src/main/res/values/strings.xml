@@ -589,7 +589,6 @@
 
     <string name="actionbar_calendar_contacts_restore">Restore contacts &amp; calendar</string>
     <string name="contacts_backup_button">Back up now</string>
-    <string name="contactlist_account_chooser_title">Choose account to import</string>
     <string name="contactlist_no_permission">No permission given, nothing imported.</string>
     <string name="restore_backup">Restore backup</string>
     <string name="contacts_preferences_no_file_found">No file found</string>
