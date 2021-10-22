@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.nextcloud.client.account.User;
-import com.nextcloud.client.network.ClientFactory;
 import com.owncloud.android.R;
 import com.owncloud.android.databinding.FileDetailsShareInternalShareLinkBinding;
 import com.owncloud.android.databinding.FileDetailsShareLinkShareItemBinding;
@@ -61,20 +60,17 @@ public class ShareeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private float avatarRadiusDimension;
     private String userId;
     private User user;
-    private final ClientFactory clientFactory;
 
     public ShareeListAdapter(FileActivity fileActivity,
                              List<OCShare> shares,
                              ShareeListAdapterListener listener,
                              String userId,
-                             User user,
-                             ClientFactory clientFactory) {
+                             User user) {
         this.fileActivity = fileActivity;
         this.shares = shares;
         this.listener = listener;
         this.userId = userId;
         this.user = user;
-        this.clientFactory = clientFactory;
 
         avatarRadiusDimension = fileActivity.getResources().getDimension(R.dimen.user_icon_radius);
 

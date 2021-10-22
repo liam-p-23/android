@@ -19,6 +19,7 @@
  */
 package com.owncloud.android.ui.fragment
 
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -149,7 +150,7 @@ class ProfileBottomSheetDialog(
             sharingIntent.putExtra("server", user.server.uri)
             sharingIntent.putExtra("userId", userId)
             fileActivity.startActivity(sharingIntent)
-        } catch (e: Exception) {
+        } catch (e: ActivityNotFoundException) {
             openWebsite(hyperlink)
         }
     }
