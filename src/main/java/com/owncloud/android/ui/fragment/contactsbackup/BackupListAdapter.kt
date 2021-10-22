@@ -56,6 +56,7 @@ import ezvcard.VCard
 import ezvcard.property.Photo
 import third_parties.sufficientlysecure.AndroidCalendar
 
+@Suppress("LongParameterList", "TooManyFunctions")
 class BackupListAdapter(
     val accountManager: UserAccountManager,
     val clientFactory: ClientFactory,
@@ -323,9 +324,11 @@ class BackupListAdapter(
     }
 
     private fun showRestoreButton() {
-        if (checkedCalendars.isEmpty() && checkedVCards.isEmpty() ||
-            (checkedCalendars.isNotEmpty() && AndroidCalendar.loadAll(context.contentResolver).size == 0)
-        ) {
+        val checkedEmpty = checkedCalendars.isEmpty() && checkedVCards.isEmpty()
+        val noCalendarAvailable =
+            checkedCalendars.isNotEmpty() && AndroidCalendar.loadAll(context.contentResolver).isEmpty()
+
+        if (checkedEmpty || noCalendarAvailable) {
             backupListFragment.showRestoreButton(false)
         } else {
             backupListFragment.showRestoreButton(true)
@@ -359,6 +362,7 @@ class BackupListAdapter(
         return calendarFiles.isNotEmpty()
     }
 
+    @Suppress("NestedBlockDepth", "TooGenericExceptionCaught")
     private fun getAccountForImport(): List<ContactsAccount> {
         val contactsAccounts = ArrayList<ContactsAccount>()
 

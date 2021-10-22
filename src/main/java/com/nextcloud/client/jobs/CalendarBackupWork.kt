@@ -51,14 +51,11 @@ class CalendarBackupWork(
 
     override fun doWork(): Result {
         val accountName = inputData.getString(ACCOUNT) ?: ""
-        if (TextUtils.isEmpty(accountName)) { // no account provided
-            return Result.failure()
-        }
         val optionalUser = accountManager.getUser(accountName)
-        if (!optionalUser.isPresent) {
+        if (!optionalUser.isPresent || TextUtils.isEmpty(accountName)) { // no account provided
             return Result.failure()
         }
-        val lastExecution = preferences.calendarLastBackup;
+        val lastExecution = preferences.calendarLastBackup
 
         val force = inputData.getBoolean(FORCE, false)
         if (force || lastExecution + JOB_INTERVAL_MS < Calendar.getInstance().timeInMillis) {
