@@ -8,6 +8,11 @@ import static org.junit.Assert.assertTrue;
 public class SearchTaskTest {
 
     // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
+    /**
+     * Test to check that the GallerySearchTask constructor correctly handles both cases
+     * of the lastYearTimestamp (i.e. input of 0 => normal gallery search task and input
+     * of timestamp != 0 => 'On this day' gallery search task).
+     */
     @Test
     public void gallerySearchConstructorTest() {
         // Test to check if instance is set to onThisDay task type

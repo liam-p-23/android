@@ -951,6 +951,7 @@
     <string name="fourHours">4 hours</string>
     <string name="thisWeek">This week</string>
     <string name="drawer_item_gallery">Media</string>
+    <!-- CS427 Issue link: https://github.com/nextcloud/android/issues/8766 -->
     <string name="drawer_item_on_this_day">On this day</string>
     <string name="player_stop">stop</string>
     <string name="player_toggle">toggle</string>
