@@ -23,6 +23,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/standard_padding">
 
+    <!-- CS427 Issue link: https://github.com/nextcloud/android/issues/7722 -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/user_input_container"
         android:layout_width="match_parent"

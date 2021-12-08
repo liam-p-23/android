@@ -71,7 +71,7 @@
         <item name="colorError">@color/hwSecurityRed</item>
         <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox</item>
     </style>
-
+    <!-- CS427 Issue link: https://github.com/nextcloud/android/issues/7722 -->
     <style name="TextInputLayoutInputWarning" parent="Widget.App.TextInputLayout">
         <item name="colorError">@color/primary</item>
     </style>

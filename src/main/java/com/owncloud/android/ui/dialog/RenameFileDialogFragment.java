@@ -93,6 +93,7 @@ public class RenameFileDialogFragment
         }
     }
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

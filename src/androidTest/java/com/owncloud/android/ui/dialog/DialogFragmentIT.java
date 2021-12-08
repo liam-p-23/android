@@ -105,6 +105,10 @@ public class DialogFragmentIT extends AbstractIT {
     }
 
     // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+
+    /**
+     * Test to check that the hidden file warning message appears after typing hidden file name into edittext.
+     */
     @Test
     public void testRenameFileDialogHiddenFile() {
         if (Looper.myLooper() == null) {
@@ -117,6 +121,10 @@ public class DialogFragmentIT extends AbstractIT {
     }
 
     // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+
+    /**
+     * Test to check that the hidden file warning message is not showing after typing regular file name into edittext.
+     */
     @Test
     public void testRenameFileDialogNormalFile() {
         if (Looper.myLooper() == null) {
