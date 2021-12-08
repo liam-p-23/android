@@ -125,6 +125,7 @@ import com.owncloud.android.utils.theme.ThemeToolbarUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.DateTime;
 import org.parceler.Parcels;
 
 import java.io.File;
@@ -498,6 +499,7 @@ public class FileDisplayActivity extends FileActivity
         }
     }
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
     // Is called with the flag FLAG_ACTIVITY_SINGLE_TOP and set the new file and intent
     @Override
     protected void onNewIntent(Intent intent) {
@@ -524,7 +526,18 @@ public class FileDisplayActivity extends FileActivity
                     if (SearchRemoteOperation.SearchType.PHOTO_SEARCH.equals(searchEvent.searchType)) {
                         Log_OC.d(this, "Switch to photo search fragment");
 
-                        GalleryFragment photoFragment = new GalleryFragment(true);
+                        long gallerySearchTimestamp = 0;
+                        if (!intent.getBooleanExtra("REGULAR_GALLERY_MODE", true)) {
+                            // Set timestamp to first millisecond of next day minus one year.
+                            DateTime dateTime = new DateTime();
+                            gallerySearchTimestamp = dateTime.plusDays(1)
+                                .minusMillis(dateTime.getMillisOfDay())
+                                .minusYears(1)
+                                .getMillis();
+                            gallerySearchTimestamp /= 1000L;
+                        }
+
+                        GalleryFragment photoFragment = new GalleryFragment(true, gallerySearchTimestamp);
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(OCFileListFragment.SEARCH_EVENT, Parcels.wrap(searchEvent));
                         photoFragment.setArguments(bundle);

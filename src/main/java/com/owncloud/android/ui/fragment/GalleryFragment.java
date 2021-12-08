@@ -52,6 +52,7 @@ public class GalleryFragment extends OCFileListFragment {
     private AsyncTask photoSearchTask;
     private SearchEvent searchEvent;
     private boolean refresh;
+    private long onThisDayTimestamp = 0;
 
     public GalleryFragment() {
         this.refresh = false;
@@ -59,6 +60,17 @@ public class GalleryFragment extends OCFileListFragment {
 
     public GalleryFragment(boolean refresh) {
         this.refresh = refresh;
+    }
+
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
+    /**
+     * Constructor creates an instance with an added timestamp parameter
+     * used to set the GalleryFragment's 'On this day' functionality.
+     * (normal GalleryFragment functionality if onThisDayTimestamp == 0).
+     */
+    public GalleryFragment(boolean refresh, long onThisDayTimestamp) {
+        this(refresh);
+        this.onThisDayTimestamp = onThisDayTimestamp;
     }
 
     @Override
@@ -153,13 +165,15 @@ public class GalleryFragment extends OCFileListFragment {
         searchAndDisplay();
     }
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
     private void searchAndDisplay() {
         if (!photoSearchQueryRunning && !photoSearchNoNew) {
             photoSearchTask = new GallerySearchTask(getColumnsCount(),
                                                     this,
                                                     accountManager.getUser(),
                                                     searchRemoteOperation,
-                                                    mContainerActivity.getStorageManager())
+                                                    mContainerActivity.getStorageManager(),
+                                                    onThisDayTimestamp)
                 .execute();
         }
     }
@@ -175,6 +189,14 @@ public class GalleryFragment extends OCFileListFragment {
     @Override
     public boolean isLoading() {
         return !photoSearchNoNew;
+    }
+
+    /**
+     * Returns whether this gallery fragment is used for 'On this day' functionality.
+     * This will be true only if onThisDayTimestamp was set to a non-zero value.
+     */
+    public boolean isOnThisDayGallery() {
+        return onThisDayTimestamp != 0;
     }
 
     private void loadMoreWhenEndReached(@NonNull RecyclerView recyclerView, int dy) {

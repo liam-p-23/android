@@ -425,7 +425,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         unsetAllDrawerMenuItems();
     }
 
-
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
     private void onNavigationItemClicked(final MenuItem menuItem) {
         setDrawerMenuItemChecked(menuItem.getItemId());
 
@@ -449,7 +449,9 @@ public abstract class DrawerActivity extends ToolbarActivity
             handleSearchEvents(new SearchEvent("", SearchRemoteOperation.SearchType.FAVORITE_SEARCH),
                                menuItem.getItemId());
         } else if (itemId == R.id.nav_gallery) {
-            startPhotoSearch(menuItem);
+            startPhotoSearch(menuItem, true);
+        } else if (itemId == R.id.nav_on_this_day) {
+            startPhotoSearch(menuItem, false);
         } else if (itemId == R.id.nav_on_device) {
             EventBus.getDefault().post(new ChangeMenuEvent());
             showFiles(true);
@@ -522,7 +524,8 @@ public abstract class DrawerActivity extends ToolbarActivity
         }
     }
 
-    private void startPhotoSearch(MenuItem menuItem) {
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
+    private void startPhotoSearch(MenuItem menuItem, boolean regularGalleryMode) {
         SearchEvent searchEvent = new SearchEvent("image/%", SearchRemoteOperation.SearchType.PHOTO_SEARCH);
         MainApp.showOnlyFilesOnDevice(false);
 
@@ -531,6 +534,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(OCFileListFragment.SEARCH_EVENT, Parcels.wrap(searchEvent));
         intent.putExtra(FileDisplayActivity.DRAWER_MENU_ID, menuItem.getItemId());
+        intent.putExtra("REGULAR_GALLERY_MODE", regularGalleryMode);
         startActivity(intent);
     }
 

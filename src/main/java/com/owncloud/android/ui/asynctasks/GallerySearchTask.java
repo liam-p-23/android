@@ -28,11 +28,13 @@ import com.owncloud.android.datamodel.FileDataStorageManager;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.files.SearchRemoteOperation;
+import com.owncloud.android.lib.resources.files.model.RemoteFile;
 import com.owncloud.android.ui.adapter.OCFileListAdapter;
 import com.owncloud.android.ui.fragment.ExtendedListFragment;
 import com.owncloud.android.ui.fragment.GalleryFragment;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResult> {
 
@@ -42,17 +44,26 @@ public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResu
     private SearchRemoteOperation searchRemoteOperation;
     private FileDataStorageManager storageManager;
     private int limit;
+    private long lastYearTimestamp = 0;
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
+    /**
+     * GallerySearchTask constructor, which now contains a timestamp parameter
+     * which signifies whether this is an 'On this day' search task and also the
+     * day that should be searched.
+     */
     public GallerySearchTask(int columnsCount,
                              GalleryFragment photoFragment,
                              User user,
                              SearchRemoteOperation searchRemoteOperation,
-                             FileDataStorageManager storageManager) {
+                             FileDataStorageManager storageManager,
+                             long lastYearTimestamp) {
         this.columnCount = columnsCount;
         this.user = user;
         this.photoFragmentWeakReference = new WeakReference<>(photoFragment);
         this.searchRemoteOperation = searchRemoteOperation;
         this.storageManager = storageManager;
+        this.lastYearTimestamp = lastYearTimestamp;
     }
 
     @Override
@@ -66,6 +77,7 @@ public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResu
         photoFragment.setPhotoSearchQueryRunning(true);
     }
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
     @Override
     protected RemoteOperationResult doInBackground(Void... voids) {
         if (photoFragmentWeakReference.get() == null) {
@@ -82,6 +94,8 @@ public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResu
             long timestamp = -1;
             if (adapter.getLastTimestamp() > 0) {
                 timestamp = adapter.getLastTimestamp();
+            } else if (lastYearTimestamp != 0) {
+                timestamp = lastYearTimestamp;
             }
 
             searchRemoteOperation.setLimit(limit);
@@ -95,12 +109,25 @@ public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResu
         }
     }
 
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/8766
     @Override
     protected void onPostExecute(RemoteOperationResult result) {
         if (photoFragmentWeakReference.get() != null) {
             GalleryFragment photoFragment = photoFragmentWeakReference.get();
 
             if (result.isSuccess() && result.getData() != null && !isCancelled()) {
+
+                if (lastYearTimestamp != 0) {
+                    ArrayList<Object> resultFileList = new ArrayList<>();
+                    long tempCutoff = ((lastYearTimestamp * 1000) - 86400000);
+                    for (Object object : result.getData()) {
+                        if (((RemoteFile)object).getModifiedTimestamp() >= tempCutoff) {
+                            resultFileList.add(object);
+                        }
+                    }
+                    result.setData(resultFileList);
+                }
+
                 if (result.getData() == null || result.getData().size() == 0) {
                     photoFragment.setSearchDidNotFindNewPhotos(true);
                 } else {
@@ -129,5 +156,13 @@ public class GallerySearchTask extends AsyncTask<Void, Void, RemoteOperationResu
 
             photoFragment.setPhotoSearchQueryRunning(false);
         }
+    }
+
+    /**
+     * Returns whether this gallery search task is used for 'On this day' functionality.
+     * This will be true only if lastYearTimestamp was set to a non-zero value.
+     */
+    public boolean isOnThisDaySearchTask() {
+        return lastYearTimestamp != 0;
     }
 }

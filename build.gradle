@@ -61,7 +61,7 @@ configurations {
 
 ext {
     androidxTestVersion = "1.4.0"
-	daggerVersion = "2.40.3"
+    daggerVersion = "2.40.3"
     markwonVersion =  "4.6.2"
     prismVersion = "2.0.0"
     androidLibraryVersion = "master-SNAPSHOT"
@@ -371,6 +371,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-intents:3.0.2')
 
     implementation "com.github.stateless4j:stateless4j:2.6.0"
+    implementation "joda-time:joda-time:2.10.3"
 }
 
 configurations.all {
