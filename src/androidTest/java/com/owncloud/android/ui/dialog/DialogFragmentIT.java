@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.nextcloud.android.lib.resources.profile.Action;
 import com.nextcloud.android.lib.resources.profile.HoverCard;
@@ -76,6 +78,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.junit.Assert.assertTrue;
 
 public class DialogFragmentIT extends AbstractIT {
 
@@ -100,6 +103,31 @@ public class DialogFragmentIT extends AbstractIT {
         RenameFileDialogFragment dialog = RenameFileDialogFragment.newInstance(new OCFile("/Test/"));
         showDialog(dialog);
     }
+
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+    @Test
+    public void testRenameFileDialogHiddenFile() {
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+        RenameFileDialogFragment dialog = RenameFileDialogFragment.newInstance(new OCFile("/Test/"));
+
+        // Test changing text to hidden file name
+        showDialogRenameFile(dialog, true);
+    }
+
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+    @Test
+    public void testRenameFileDialogNormalFile() {
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+        RenameFileDialogFragment dialog = RenameFileDialogFragment.newInstance(new OCFile("/Test/"));
+
+        // Test changing text to normal file name
+        showDialogRenameFile(dialog, false);
+    }
+
 
     @Test
     @ScreenshotTest
@@ -442,6 +470,51 @@ public class DialogFragmentIT extends AbstractIT {
         screenshot(Objects.requireNonNull(dialog.requireDialog().getWindow()).getDecorView());
 
         return sut;
+    }
+
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+    private FileDisplayActivity showDialogRenameFile(DialogFragment dialog, boolean isTestHiddenFile) {
+        Intent intent = new Intent(targetContext, FileDisplayActivity.class);
+        FileDisplayActivity sut = activityRule.launchActivity(intent);
+
+        dialog.show(sut.getSupportFragmentManager(), "");
+
+        getInstrumentation().waitForIdleSync();
+        shortSleep();
+        ViewGroup viewGroup = dialog.requireDialog().getWindow().findViewById(android.R.id.content);
+        setFileNameText(viewGroup, sut, isTestHiddenFile);
+
+        return sut;
+    }
+
+    // CS427 Issue link: https://github.com/nextcloud/android/issues/7722
+    private void setFileNameText(ViewGroup viewGroup, FileDisplayActivity sut, boolean isTestHiddenFile) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+
+            if (child instanceof ViewGroup) {
+                setFileNameText((ViewGroup) child, sut, isTestHiddenFile);
+            }
+
+            if (child instanceof TextInputEditText) {
+                sut.runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            if (isTestHiddenFile) {
+                                ((TextInputEditText) child).setText(".hiddenFile.txt");
+                            } else {
+                                ((TextInputEditText) child).setText("regularFile.txt");
+                            }
+                        }
+                    });
+                shortSleep();
+                if (isTestHiddenFile) {
+                    assertTrue(((TextInputLayout) child.getParent().getParent()).getError() != null);
+                } else {
+                    assertTrue(((TextInputLayout) child.getParent().getParent()).getError() == null);
+                }
+            }
+        }
     }
 
     private void hideCursors(ViewGroup viewGroup) {
